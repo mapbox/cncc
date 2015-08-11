@@ -1,0 +1,45 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+
+import argparse as A, collections as C, re as R, sys as S, os as O, yaml as Y
+from clang.cindex import Index as I, CursorKind as K, CompilationDatabase as D
+
+if __name__ == '__main__':
+    parser = A.ArgumentParser(description='Customizable Naming Convention Checker')
+    parser.add_argument('filepath', help='path to file')
+    parser.add_argument('--style', dest='style', required=True,
+                        help='user-defined `cncc.style` file to validate against')
+    parser.add_argument('--dbdir', dest='dbdir', required=False,
+                        help='directory where `compilation_database.json` resides')
+    args = parser.parse_args()
+
+    commands = None
+
+    if args.dbdir:
+        compiledb = D.fromDirectory(args.dbdir)
+        commands = compiledb.getCompileCommands(args.filepath)
+
+    index = I.create()
+    unit = index.parse(args.filepath, args=commands)
+    cursor = unit.cursor
+
+    namedkinds = {kind.name.lower(): kind for kind in K.get_all_kinds()}
+
+    with open(args.style) as stylefile:
+        rules = Y.safe_load(stylefile)
+
+    ruledb = {namedkinds[kind]: R.compile(pattern) for (kind, pattern) in rules.items()}
+
+    check = lambda node: ruledb.get(node.kind)
+    local = lambda node: node.location.file and node.location.file.name == args.filepath
+    invalid = lambda node: not ruledb[node.kind].match(node.spelling)
+
+    notify = [node for node in cursor.walk_preorder() if check(node) and local(node) and invalid(node)]
+
+    for node in notify:
+        fmt = '{}:{}:{}: "{}" does not conform to pattern "{}" associated with {}\n'
+        msg = fmt.format(node.location.file.name, node.location.line, node.location.column,
+                         node.displayname, ruledb[node.kind].pattern, node.kind.name.lower())
+        S.stderr.write(msg)
+
+    S.exit(len(notify))

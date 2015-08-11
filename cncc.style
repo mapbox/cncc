@@ -1,0 +1,10 @@
+# Kind-specific patterns to check AST nodes against. Both python-clang and
+# libclang docs explain CursorKind, with differences in detail. See also:
+#  - https://github.com/llvm-mirror/clang/blob/aca4fe314a55cacae29e1548cb7bfd2119c6df4c/bindings/python/clang/cindex.py#L599
+#  - http://clang.llvm.org/doxygen/group__CINDEX.html#gaaccc432245b4cd9f2d470913f9ef0013
+#  - https://docs.python.org/2/library/re.html#regular-expression-syntax
+
+class_decl: '^([A-Z][a-z]+)+$'
+field_decl: '^[a-z]+_$'
+var_decl: '^[a-z][a-z0-9]*$'
+namespace: '^[a-z]?$'
