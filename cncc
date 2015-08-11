@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-import argparse as A, collections as C, re as R, sys as S, os as O, yaml as Y
+import argparse as A, re as R, sys as S, yaml as Y
 from clang.cindex import Index as I, CursorKind as K, CompilationDatabase as D
 
 if __name__ == '__main__':
