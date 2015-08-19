@@ -1,16 +1,16 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-import argparse as A, re as R, sys as S, yaml as Y
+import argparse as A, re as R, sys as S, os.path as P, yaml as Y
 from clang.cindex import Index as I, CursorKind as K, CompilationDatabase as D
 
 if __name__ == '__main__':
     parser = A.ArgumentParser(description='Customizable Naming Convention Checker')
     parser.add_argument('filepath', help='path to file')
-    parser.add_argument('--style', dest='style', required=True,
-                        help='user-defined `cncc.style` file to validate against')
-    parser.add_argument('--dbdir', dest='dbdir', required=False,
-                        help='directory where `compilation_database.json` resides')
+    parser.add_argument('--style', dest='style', default=P.expanduser('~/.cncc.style'),
+                        help='user-defined style file, defaults to `.cncc.style` in your home directory')
+    parser.add_argument('--dbdir', dest='dbdir',
+                        help='build path is used to read a `compile_commands.json` compile command database')
     args = parser.parse_args()
 
     commands = None

@@ -37,7 +37,11 @@ For all available nodes see the [official libclang documentation](http://clang.l
 
 For standalone files, with default compiler invocation:
 
-    cncc --style=cncc.style test.cc
+    cncc --style=examples/small.style examples/test.cc
+
+CNCC defaults to reading a `.cncc.style` file in your home directory if no style file was given.
+
+    cncc examples/test.cc
 
 Sometimes compilation gets more involved.
 Use CMake or Bear in order to create a `compile_command.json` compilation database.
