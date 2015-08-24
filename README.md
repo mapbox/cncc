@@ -6,6 +6,8 @@ This is quite similar to what `clang-format` does but way more simple and for na
 
 In short, CNCC supports user-defined pattern validation based on AST nodes: you can specify patterns for variables, class names, namespace names, and so on.
 
+Note: [recent this patch](https://github.com/llvm-mirror/clang-tools-extra/commit/89b8288d86c6b9cbe2526e8b78b8c3559a34e7e4) introduces the concept to `clang-tidy.`
+
 ## Example
 
 You provide a style file containing regular expressions for validating AST nodes, such as:
