@@ -44,4 +44,4 @@ if __name__ == '__main__':
                              node.displayname, ruledb[node.kind].pattern, node.kind.name.lower())
             S.stderr.write(msg)
 
-    S.exit(len(notify))
+    S.exit(1 if notify else 0)
