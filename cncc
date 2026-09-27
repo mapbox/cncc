@@ -34,6 +34,7 @@ if __name__ == '__main__':
     check = lambda node: ruledb.get(node.kind)
     local = lambda node: node.location.file and node.location.file.name in args.files
     invalid = lambda node: not ruledb[node.kind].match(node.spelling)
+    failed = False
 
     for f in args.files:
         commands = None
@@ -45,6 +46,8 @@ if __name__ == '__main__':
         cursor = unit.cursor
 
         notify = [node for node in cursor.walk_preorder() if check(node) and local(node) and invalid(node)]
+        if notify:
+            failed = True
 
         for node in notify:
             fmt = '{}:{}:{}: "{}" does not conform to pattern "{}" associated with {}\n'
@@ -52,4 +55,4 @@ if __name__ == '__main__':
                              node.displayname, ruledb[node.kind].pattern, node.kind.name.lower())
             S.stderr.write(msg)
 
-    S.exit(1 if notify else 0)
+    S.exit(1 if failed else 0)
